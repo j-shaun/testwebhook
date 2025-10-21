@@ -31,14 +31,14 @@ app.post("/", async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   try {
-    // Extract WhatsApp message text and sender
-    const messages = req.body.entry?.[0]?.changes?.[0]?.value?.messages;
+    // Extract sender number and message text from Meta payload
+    const messages = req.body.value?.messages;
     if (messages && messages.length > 0) {
       const msgObj = messages[0];
       const phone = msgObj.from;
       const message = msgObj.text?.body || ""; // Ensure message text is not empty
 
-      // Prepare payload for Make.com
+      // Prepare clean payload for Make.com
       const payload = {
         phone,
         message
