@@ -24,11 +24,22 @@ app.get('/', (req, res) => {
 });
 
 // Route for POST requests
-app.post('/', (req, res) => {
-  const timestamp = new Date().toISOString().replace('T', ' ').slice(0, 19);
-  console.log(`\n\nWebhook received ${timestamp}\n`);
-  console.log(JSON.stringify(req.body, null, 2));
-  res.status(200).end();
+app.post("/webhook", async (req, res) => {
+  try {
+    const data = req.body;
+
+    // Forward it to Make.com
+    await fetch("https://hook.make.com/your-make-webhook-id", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("Error forwarding webhook:", err);
+    res.sendStatus(500);
+  }
 });
 
 // Start the server
