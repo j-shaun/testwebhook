@@ -24,20 +24,25 @@ app.get('/', (req, res) => {
 });
 
 // Route for POST requests
-app.post("/webhook", async (req, res) => {
-  try {
-    const data = req.body;
+app.post("/", async (req, res) => {
+  const timestamp = new Date().toISOString().replace("T", " ").slice(0, 19);
+  console.log(`\n\n📩 Webhook received at ${timestamp}`);
+  console.log(JSON.stringify(req.body, null, 2));
 
-    // Forward it to Make.com
-    await fetch("https://hook.eu2.make.com/ho65dx1jfmekqft4o398u4tlkfon3082", {
+  try {
+    // Forward to Make.com webhook
+    const makeWebhookUrl = "https://hook.eu2.make.com/ho65dx1jfmekqft4o398u4tlkfon3082";
+
+    await fetch(makeWebhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+      body: JSON.stringify(req.body),
     });
 
+    console.log("✅ Forwarded successfully to Make.com");
     res.sendStatus(200);
   } catch (err) {
-    console.error("Error forwarding webhook:", err);
+    console.error("❌ Error forwarding webhook:", err);
     res.sendStatus(500);
   }
 });
