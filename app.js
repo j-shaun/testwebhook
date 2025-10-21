@@ -29,7 +29,7 @@ app.post("/webhook", async (req, res) => {
     const data = req.body;
 
     // Forward it to Make.com
-    await fetch("https://hook.make.com/your-make-webhook-id", {
+    await fetch("https://hook.eu2.make.com/6beeicg6mg7q91enr528fk15debnc3fv", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
