@@ -1,71 +1,56 @@
-// Import Express.js
+// app.js
 const express = require('express');
-const fetch = require('node-fetch'); // make sure to install node-fetch
-
-// Create an Express app
+const fetch = require('node-fetch'); // v2 or compatible
 const app = express();
-
-// Middleware to parse JSON bodies
 app.use(express.json());
 
-// Set port and verify_token
+const VERIFY_TOKEN = 'Homeone123';
+const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/ho65dx1jfmekqft4o398u4tlkfon3082';
+
 const port = process.env.PORT || 3000;
 const verifyToken = process.env.VERIFY_TOKEN;
+const makeWebhook = process.env.MAKE_WEBHOOK_URL;
 
-// Route for GET requests (Webhook verification)
 app.get('/', (req, res) => {
   const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
-
   if (mode === 'subscribe' && token === verifyToken) {
     console.log('WEBHOOK VERIFIED');
-    res.status(200).send(challenge);
-  } else {
-    res.status(403).end();
+    return res.status(200).send(challenge);
   }
+  return res.status(403).end();
 });
 
-// Route for POST requests (Incoming messages)
-app.post("/", async (req, res) => {
-  const timestamp = new Date().toISOString().replace("T", " ").slice(0, 19);
-  console.log(`\n\n📩 Webhook received at ${timestamp}`);
-  console.log(JSON.stringify(req.body, null, 2));
-
+app.post('/', async (req, res) => {
   try {
-    // Extract sender number and message text from Meta payload
-    const messages = req.body.value?.messages;
+    console.log('Incoming payload:', JSON.stringify(req.body, null, 2));
+    const messages = req.body.entry?.[0]?.changes?.[0]?.value?.messages
+                  || req.body.value?.messages;
     if (messages && messages.length > 0) {
-      const msgObj = messages[0];
-      const phone = msgObj.from;
-      const message = msgObj.text?.body || ""; // Ensure message text is not empty
-
-      // Prepare clean payload for Make.com
+      const msg = messages[0];
       const payload = {
-        phone,
-        message
+        phone: msg.from, // e.g. "60186694781" or "16315551181" depending on source
+        message: msg.text?.body || '',
+        timestamp: new Date().toISOString(),
+        meta: {
+          message_id: msg.id || null,
+          type: msg.type || 'text'
+        }
       };
 
-      // Forward to Make.com webhook
-      const makeWebhookUrl = "https://hook.eu2.make.com/ho65dx1jfmekqft4o398u4tlkfon3082";
-
-      await fetch(makeWebhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      await fetch(makeWebhook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
-
-      console.log("✅ Forwarded successfully to Make.com:", payload);
+      console.log('Forwarded to Make:', payload);
     } else {
-      console.log("⚠️ No messages found in webhook payload");
+      console.log('No message object in payload');
     }
-
     res.sendStatus(200);
   } catch (err) {
-    console.error("❌ Error forwarding webhook:", err);
+    console.error('Error in POST / :', err);
     res.sendStatus(500);
   }
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`\nListening on port ${port}\n`);
-});
+app.listen(port, () => console.log(`Listening on ${port}`));
