@@ -30,7 +30,7 @@ app.post("/", async (req, res) => {
 
 // (Optional) GET route for Meta verification
 app.get("/", (req, res) => {
-  const VERIFY_TOKEN = "wati1234"; // same as your Meta webhook verify token
+  const VERIFY_TOKEN = "Homeone123"; // same as your Meta webhook verify token
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
