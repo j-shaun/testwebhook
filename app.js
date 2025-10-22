@@ -12,7 +12,7 @@ app.post("/", async (req, res) => {
 
   try {
     // Forward to Make.com webhook
-    const makeWebhookUrl = "https://hook.eu2.make.com/6beeicg6mg7q91enr528fk15debnc3fv";
+    const makeWebhookUrl = "https://hook.eu2.make.com/490soksxsf9oxkluml33g2n74km3a5p0";
 
     await fetch(makeWebhookUrl, {
       method: "POST",
