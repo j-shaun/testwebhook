@@ -1,56 +1,46 @@
-// app.js
-const express = require('express');
-const fetch = require('node-fetch'); // v2 or compatible
+import express from "express";
+import fetch from "node-fetch";
+
 const app = express();
 app.use(express.json());
 
-const VERIFY_TOKEN = 'Homeone123';
-const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/490soksxsf9oxkluml33g2n74km3a5p0';
+// ✅ POST route for WhatsApp Webhook
+app.post("/", async (req, res) => {
+  const timestamp = new Date().toISOString().replace("T", " ").slice(0, 19);
+  console.log(`\n\n📩 Webhook received at ${timestamp}`);
+  console.log(JSON.stringify(req.body, null, 2));
 
-const port = process.env.PORT || 3000;
-const verifyToken = process.env.VERIFY_TOKEN;
-const makeWebhook = process.env.MAKE_WEBHOOK_URL;
-
-app.get('/', (req, res) => {
-  const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
-  if (mode === 'subscribe' && token === verifyToken) {
-    console.log('WEBHOOK VERIFIED');
-    return res.status(200).send(challenge);
-  }
-  return res.status(403).end();
-});
-
-app.post('/', async (req, res) => {
   try {
-    console.log('Incoming payload:', JSON.stringify(req.body, null, 2));
-    const messages = req.body.entry?.[0]?.changes?.[0]?.value?.messages
-                  || req.body.value?.messages;
-    if (messages && messages.length > 0) {
-      const msg = messages[0];
-      const payload = {
-        phone: msg.from, // e.g. "60186694781" or "16315551181" depending on source
-        message: msg.text?.body || '',
-        timestamp: new Date().toISOString(),
-        meta: {
-          message_id: msg.id || null,
-          type: msg.type || 'text'
-        }
-      };
+    // Forward to Make.com webhook
+    const makeWebhookUrl = "https://hook.eu2.make.com/6beeicg6mg7q91enr528fk15debnc3fv";
 
-      await fetch(makeWebhook, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      console.log('Forwarded to Make:', payload);
-    } else {
-      console.log('No message object in payload');
-    }
+    await fetch(makeWebhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req.body),
+    });
+
+    console.log("✅ Forwarded successfully to Make.com");
     res.sendStatus(200);
   } catch (err) {
-    console.error('Error in POST / :', err);
+    console.error("❌ Error forwarding webhook:", err);
     res.sendStatus(500);
   }
 });
 
-app.listen(port, () => console.log(`Listening on ${port}`));
+// (Optional) GET route for Meta verification
+app.get("/", (req, res) => {
+  const VERIFY_TOKEN = "wati1234"; // same as your Meta webhook verify token
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  if (mode && token && mode === "subscribe" && token === VERIFY_TOKEN) {
+    console.log("✅ Webhook verified successfully by Meta");
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
+  }
+});
+
+app.listen(3000, () => console.log("🚀 Webhook running on port 3000"));
