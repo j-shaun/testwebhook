@@ -9,7 +9,7 @@ app.use(express.json());
 
 // Set port and verify_token
 const port = process.env.PORT || 3000;
-const verifyToken = process.env.Homeone123;
+const verifyToken = process.env.VERIFY_TOKEN;
 
 // Route for GET requests
 app.get('/', (req, res) => {
@@ -25,6 +25,16 @@ app.get('/', (req, res) => {
 
 // Route for POST requests
 app.post('/', (req, res) => {
+
+  const payload = req.body;
+
+  // Forward to Make webhook
+  await fetch('https://hook.eu2.make.com/blilusszh7pf72gl751rb86e7f69hs3f', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  
   const timestamp = new Date().toISOString().replace('T', ' ').slice(0, 19);
   console.log(`\n\nWebhook received ${timestamp}\n`);
   console.log(JSON.stringify(req.body, null, 2));
