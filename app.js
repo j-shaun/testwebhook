@@ -42,9 +42,18 @@ app.post('/', async (req, res) => {
           message: {
             text: msg.text?.body || '',
             timestamp: msg.timestamp,
-            threadId: msg.id
+            threadId: msg.id || ''
           },
-          contact: { name: msg.profile?.name || 'Unknown' }
+          contact: {
+            fullName: msg.profile?.name || 'Unknown',
+            whatsapp: msg.from,
+            email: msg.email || '',
+            address: '',
+            note: msg.text?.body || '',
+            status: 'New',
+            pdpaConsent: 'N/A',
+            attachments: msg.image ? [msg.image] : [],
+            bookings: []
         }
       };
     }
