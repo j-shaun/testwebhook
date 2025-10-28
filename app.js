@@ -51,6 +51,8 @@ app.post('/', async (req, res) => {
             address: '',
             note: msg.text?.body || '',
             status: 'New',
+            preferredWindowStart: '',
+            preferredWindowEnd: '',
             pdpaConsent: 'N/A',
             attachments: msg.image ? [msg.image] : [],
             bookings: []
