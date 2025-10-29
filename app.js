@@ -36,7 +36,7 @@ const makeWebhookUrl = 'https://hook.eu2.make.com/z5sp1379x25t8qv3c4o7bsagakqlx2
     if (body.field === 'messages' && body.value?.messages?.length) {
       const msg = body.value.messages[0];
       payload = {
-        event: 'conversation.new_message',
+        event: 'flow.completed',
         data: {
           waId: msg.from,
           message: {
