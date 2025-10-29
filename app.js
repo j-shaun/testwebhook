@@ -56,6 +56,7 @@ const makeWebhookUrl = 'https://hook.eu2.make.com/z5sp1379x25t8qv3c4o7bsagakqlx2
             pdpaConsent: 'N/A',
             attachments: msg.image ? [msg.image] : [],
             bookings: []
+          }
         }
       };
     }
