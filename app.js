@@ -26,8 +26,8 @@ app.post('/', async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   // Prepare Make webhook URL
- // const makeWebhookUrl = 'https://hook.eu2.make.com/blilusszh7pf72gl751rb86e7f69hs3f';
-const makeWebhookUrl = 'https://hook.eu2.make.com/z5sp1379x25t8qv3c4o7bsagakqlx2p4'; 
+ const makeWebhookUrl = 'https://hook.eu2.make.com/blilusszh7pf72gl751rb86e7f69hs3f';
+//const makeWebhookUrl = 'https://hook.eu2.make.com/z5sp1379x25t8qv3c4o7bsagakqlx2p4'; 
   try {
     const body = req.body;
     let payload = {};
@@ -36,7 +36,7 @@ const makeWebhookUrl = 'https://hook.eu2.make.com/z5sp1379x25t8qv3c4o7bsagakqlx2
     if (body.field === 'messages' && body.value?.messages?.length) {
       const msg = body.value.messages[0];
       payload = {
-        event: 'flow.completed',
+        event: 'conversation.new_message',
         data: {
           waId: msg.from,
           message: {
@@ -53,7 +53,8 @@ const makeWebhookUrl = 'https://hook.eu2.make.com/z5sp1379x25t8qv3c4o7bsagakqlx2
             status: 'New',
             preferredWindowStart: '',
             preferredWindowEnd: '',
-            pdpaConsent: 'N/A',
+            //exactSlot: '',
+            pdpaConsent: '',
             attachments: msg.image ? [msg.image] : [],
             bookings: []
           }
