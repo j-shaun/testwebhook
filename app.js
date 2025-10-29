@@ -26,8 +26,8 @@ app.post('/', async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   // Prepare Make webhook URL
- const makeWebhookUrl = 'https://hook.eu2.make.com/blilusszh7pf72gl751rb86e7f69hs3f';
-//const makeWebhookUrl = 'https://hook.eu2.make.com/z5sp1379x25t8qv3c4o7bsagakqlx2p4'; 
+// const makeWebhookUrl = 'https://hook.eu2.make.com/blilusszh7pf72gl751rb86e7f69hs3f';
+const makeWebhookUrl = 'https://hook.eu2.make.com/z5sp1379x25t8qv3c4o7bsagakqlx2p4'; 
   try {
     const body = req.body;
     let payload = {};
