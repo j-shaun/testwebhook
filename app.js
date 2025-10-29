@@ -53,7 +53,7 @@ app.post('/', async (req, res) => {
             status: 'New',
             preferredWindowStart: '',
             preferredWindowEnd: '',
-            //exactSlot: '',
+            exactSlot: '',
             pdpaConsent: '',
             attachments: msg.image ? [msg.image] : [],
             bookings: []
